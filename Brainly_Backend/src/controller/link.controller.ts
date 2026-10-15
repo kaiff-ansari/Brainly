@@ -1,40 +1,94 @@
 import type { Request, Response } from "express";
 import { linkModel } from "../models/link.model.js";
+import { contentModel } from "../models/content.model.js";
+import { userModel } from "../models/user.model.js";
+import { random } from "../utils.js";
 
-export const generateLink = async (req: Request<{hash:string}>, res: Response) => {
-
-    const { hash} = req.body;
-
-    if (!req.userId){
-        return res.status(403).json({
-            message: "Unathorized"
-        })
-    }
+export const generateLink = async (req: Request, res: Response) => {
 
     try {
-        const newLink = await linkModel.create({
-           hash,
-           userId: req.userId
-        });
-        res.status(201).json(newLink);
+        const userId = req.userId;
+
+        if (!userId) {
+            return res.status(401).json({ message: "User not authenticated" });
+        }
+
+        const share = req.body.share
+
+        if (share) {
+
+            const existingLink = await linkModel.findOne({
+                userId
+            })
+
+            if (existingLink) {
+                return res.json({
+                    hash: existingLink.hash
+                })
+
+            }
+            const hash = random(10);
+            await linkModel.create({
+                userId,
+                hash: hash
+            })
+
+            return res.json({
+                message: hash
+            })
+        }
+
+        else {
+
+            await linkModel.deleteOne({ userId })
+        }
+
+        return res.json({
+            message: "updated shareble link"
+        })
+
+
     } catch (error) {
         res.status(500).json({ message: "Error generating link", error });
     }
+
+
+
+
+
 }
 
-export const getLink = async (req: Request<{hash:string}>, res: Response) => {
+export const getLink = async (req: Request<{ hash: string }>, res: Response) => {
 
     const { hash } = req.params;
 
-    try{
+    try {
 
 
         const link = await linkModel.findOne({ hash });
 
-        if(!link){
-            return res.status(404).json({ message: "Link not found" });
+        if (!link) {
+            return res.status(411).json({ message: "Link not found" });
         }
-        res.status(200).json(link);
+
+        const content = await contentModel.findOne({
+            userId: link.userId
+        })
+
+        const user = await userModel.findOne({
+            _id: link.userId
+        })
+
+        if (!user) {
+            return res.status(411).json({ message: "User not found" });
+        }
+        return res.status(200).json({
+
+            username: user.username,
+            content: content
+
+        });
+
     } catch (error) {
         res.status(500).json({ message: "Error fetching link", error });
     }
@@ -50,7 +104,7 @@ export const getAllLinks = async (req: Request, res: Response) => {
     }
 }
 
-export const deleteLink = async (req: Request<{hash:string}>, res: Response) => {
+export const deleteLink = async (req: Request<{ hash: string }>, res: Response) => {
     const { hash } = req.params;
 
     try {
@@ -73,15 +127,15 @@ export const deleteLink = async (req: Request<{hash:string}>, res: Response) => 
     }
 };
 
-export const updateLink = async (req: Request<{hash:string}>, res: Response) => {
+export const updateLink = async (req: Request<{ hash: string }>, res: Response) => {
 
-    const {hash} = req.params;
+    const { hash } = req.params;
 
-    try{
+    try {
 
         const updatedLink = await linkModel.findOneAndUpdate({ hash }, req.body, { new: true });
 
-        if(!updatedLink){
+        if (!updatedLink) {
             return res.status(404).json({ message: "Link not found" });
         }
 

@@ -1,11 +1,11 @@
 import express from 'express';
-import {generateLink, getLink, updateLink, deleteLink} from '../controller/link.controller.js';
+import {generateLink, getLink} from '../controller/link.controller.js';
+import { userMiddleware } from '../middleware/auth.middleware.js';
 
 const router = express.Router();
 
-router.post('/generate', generateLink);
-router.get('/:hash', getLink);
-router.put('/:hash', updateLink);
-router.delete('/:hash', deleteLink);
+router.post('/brain/share', userMiddleware, generateLink);
+router.get('/brain/:hash',getLink);
+
 
 export default router;

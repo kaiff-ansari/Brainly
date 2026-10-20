@@ -7,26 +7,11 @@ function App() {
 
 
   return (
-    <>
+     <div>
 
-      <Button
-        variant="primary"
-        startIcon={<PlusIcons size={"lg"} />}
-        size="lg"
-        text="Add Content"
-        
-      />
-
-      <Button
-        variant="secondary"
-        endIcon={<ShareIcon size="lg" />}
-        size="lg"
-        text="Share"
-        
-      />
-
-
-    </>
+      <Button variant='primary' text='Add content' startIcon={<PlusIcons/>}/>
+      <Button variant='secondary' text='Share Brain' startIcon={<ShareIcon/>}/>
+     </div>
   )
 }
 

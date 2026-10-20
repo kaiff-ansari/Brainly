@@ -2,35 +2,29 @@ import type { ReactElement } from "react";
 interface ButtonProps {
 
   variant: "primary" | "secondary";
-  size: "sm" | "md" | "lg";
   text: string;
   startIcon?: ReactElement;
-  endIcon?: ReactElement;
-  onClick: () => void;
 
 }
 
-const variantStles = {
+const variantClasses = {
 
   "primary": "bg-purple-600 text-white",
-  "secondary": "bg-purple-400 text-purple-600"
+  "secondary": "bg-purple-200 text-purple-600"
 }
 
-const sizeStyles = {
 
-  "sm": "py-1 px-2 text-sm rounded-sm",
-  "md": "py-2 px-4 text-md rounded-md",
-  "lg": "py-4 px-8 text-lg rounded-lg"
-}
+const defaultStyle = "px-4 py-2 rounded-md font-light flex items-center"
 
-const defaultStyle = "rounded-md flex"
-
-const Button = (props: ButtonProps) => {
+const Button = ({ variant, text, startIcon }: ButtonProps) => {
 
 
-  return <button className={`${variantStles[props.variant]} ${defaultStyle} ${sizeStyles
-  [props.size]}`}>
-    {props.startIcon ? <div className="pr-2">{props.startIcon}</div> : null} {props.text} {props.endIcon}
+  return <button className={`${variantClasses[variant]} ${defaultStyle}`}>
+
+    <div className="pr-2">
+      {startIcon}
+    </div>
+    {text}
   </button>
 }
 

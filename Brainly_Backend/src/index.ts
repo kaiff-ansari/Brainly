@@ -6,13 +6,14 @@ import authRoutes from "./routes/auth.route.js";
 import contentRotes from "./routes/content.route.js";
 import linkRoutes from "./routes/link.route.js";
 import connectDB from "./config/db.js";
+import cors from "cors";
 dotenv.config();
 
 connectDB();
 
 const app = express();
 app.use(express.json());
-
+app.use(cors());
 app.get("/", (req, res) => {
     res.send("Hello World");
 });

@@ -1,38 +1,34 @@
-import  { Request, Response, NextFunction } from "express";
-import jwt, {JwtPayload} from "jsonwebtoken";
+import { Request, Response, NextFunction } from "express";
+import jwt, { JwtPayload } from "jsonwebtoken";
 
 
 export const userMiddleware = (req: Request, res: Response, next: NextFunction) => {
 
 
-    const header = req.headers["authorization"];
-
-    
-    const jwtSecret =  process.env.JWT_SECRET;
+    const jwtSecret = process.env.JWT_SECRET;
     if (!jwtSecret) {
         return res.status(500).json({ message: "JWT secret is not defined" });
     }
 
-    
+    const authorization = req.headers.authorization;
+    if (!authorization) {
+        return res.status(401).json({ message: "Authorization token is required" });
+    }
 
-    const decoded = jwt.verify(header as string, jwtSecret);
+    const token = authorization.startsWith("Bearer ")
+        ? authorization.slice(7)
+        : authorization;
 
-    if (decoded){
-
-         if (typeof decoded === "string") {
-            res.status(403).json({
-                message: "You are not logged in"
-            })
-            return;    
+    try {
+        const decoded = jwt.verify(token, jwtSecret);
+        if (typeof decoded === "string" || typeof decoded.id !== "string") {
+            return res.status(401).json({ message: "Invalid authorization token" });
         }
-        
-        
-       req.userId = (decoded as JwtPayload).id;
-       next()
+
+        req.userId = decoded.id;
+        return next();
+    } catch {
+        return res.status(401).json({ message: "Invalid or expired authorization token" });
     }
 
-    else{
-        return res.status(403).json({message: "you are not logged in "})
-    }
-   
 }

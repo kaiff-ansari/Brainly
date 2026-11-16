@@ -2,12 +2,15 @@ import Logo from "../icons/Logo";
 import TwitterIcon from "../icons/TwitterIcon";
 import YouTubeIcon from "../icons/YouTubeIcon";
 import ArticleIcon from "../icons/ArticleIcon";
+import CrossIcon from "../icons/CrossIcon";
 import SidebarItem from "./SidebarItem";
 import { useNavigate } from "react-router-dom";
 
 interface SidebarProps {
   selectedFilter?: string;
   onSelectFilter?: (filter: string) => void;
+  isOpen?: boolean;
+  onClose?: () => void;
 }
 
 const AllIcon = () => (
@@ -22,7 +25,12 @@ const LogoutIcon = () => (
   </svg>
 );
 
-const Sidebar = ({ selectedFilter = "all", onSelectFilter }: SidebarProps) => {
+const Sidebar = ({
+  selectedFilter = "all",
+  onSelectFilter,
+  isOpen = false,
+  onClose
+}: SidebarProps) => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -30,52 +38,83 @@ const Sidebar = ({ selectedFilter = "all", onSelectFilter }: SidebarProps) => {
     navigate("/signin");
   };
 
+  const handleSelect = (filter: string) => {
+    onSelectFilter?.(filter);
+    onClose?.();
+  };
+
   return (
-    <div className="h-screen bg-white border-r border-gray-200 w-64 fixed left-0 top-0 flex flex-col justify-between p-4 z-20">
-      <div>
-        <div className="flex text-2xl font-bold items-center py-4 px-2 text-gray-800">
-          <div className="pr-3 text-purple-600">
-            <Logo />
+    <>
+      {/* Mobile overlay backdrop */}
+      {isOpen && (
+        <div
+          className="fixed inset-0 bg-black/40 z-30 md:hidden transition-opacity"
+          onClick={onClose}
+        />
+      )}
+
+      {/* Sidebar container */}
+      <div
+        className={`h-screen bg-white border-r border-gray-200 w-64 fixed left-0 top-0 flex flex-col justify-between p-4 z-40 transition-transform duration-300 ease-in-out md:translate-x-0 ${
+          isOpen ? "translate-x-0 shadow-2xl" : "-translate-x-full"
+        }`}
+      >
+        <div>
+          <div className="flex justify-between items-center py-4 px-2">
+            <div className="flex text-2xl font-bold items-center text-gray-800">
+              <div className="pr-3 text-purple-600">
+                <Logo />
+              </div>
+              Brainly
+            </div>
+            {/* Close button on mobile */}
+            <button
+              type="button"
+              onClick={onClose}
+              className="md:hidden text-gray-400 hover:text-gray-700 p-1 cursor-pointer"
+              title="Close menu"
+            >
+              <CrossIcon />
+            </button>
           </div>
-          Brainly
+
+          <nav className="mt-6 flex flex-col gap-1">
+            <SidebarItem
+              text="All Notes"
+              icon={<AllIcon />}
+              active={selectedFilter === "all"}
+              onClick={() => handleSelect("all")}
+            />
+            <SidebarItem
+              text="YouTube"
+              icon={<YouTubeIcon />}
+              active={selectedFilter === "youtube"}
+              onClick={() => handleSelect("youtube")}
+            />
+            <SidebarItem
+              text="Twitter / X"
+              icon={<TwitterIcon />}
+              active={selectedFilter === "twitter"}
+              onClick={() => handleSelect("twitter")}
+            />
+            <SidebarItem
+              text="Articles"
+              icon={<ArticleIcon />}
+              active={selectedFilter === "article"}
+              onClick={() => handleSelect("article")}
+            />
+          </nav>
         </div>
 
-        <nav className="mt-6 flex flex-col gap-1">
+        <div className="pt-4 border-t border-gray-200">
           <SidebarItem
-            text="All Notes"
-            icon={<AllIcon />}
-            active={selectedFilter === "all"}
-            onClick={() => onSelectFilter?.("all")}
+            text="Logout"
+            icon={<LogoutIcon />}
+            onClick={handleLogout}
           />
-          <SidebarItem
-            text="YouTube"
-            icon={<YouTubeIcon />}
-            active={selectedFilter === "youtube"}
-            onClick={() => onSelectFilter?.("youtube")}
-          />
-          <SidebarItem
-            text="Twitter / X"
-            icon={<TwitterIcon />}
-            active={selectedFilter === "twitter"}
-            onClick={() => onSelectFilter?.("twitter")}
-          />
-          <SidebarItem
-            text="Articles"
-            icon={<ArticleIcon />}
-            active={selectedFilter === "article"}
-            onClick={() => onSelectFilter?.("article")}
-          />
-        </nav>
+        </div>
       </div>
-
-      <div className="pt-4 border-t border-gray-200">
-        <SidebarItem
-          text="Logout"
-          icon={<LogoutIcon />}
-          onClick={handleLogout}
-        />
-      </div>
-    </div>
+    </>
   );
 };
 

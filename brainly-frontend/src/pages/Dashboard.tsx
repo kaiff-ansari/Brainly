@@ -5,6 +5,7 @@ import Card from "../components/Card";
 import CreateContentModal from "../components/CreateContentModal";
 import PlusIcons from "../icons/PlusIcons";
 import ShareIcon from "../icons/ShareIcon";
+import MenuIcon from "../icons/MenuIcon";
 import Sidebar from "../components/Sidebar";
 import { useContent, type ContentItem } from "../hooks/useContent";
 import axios from "axios";
@@ -17,6 +18,7 @@ function Dashboard() {
   const isSharedView = Boolean(hash);
 
   const [modalOpen, setModalOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const [selectedFilter, setSelectedFilter] = useState("all");
   const [sharedUsername, setSharedUsername] = useState<string>("");
   const [sharedContents, setSharedContents] = useState<ContentItem[]>([]);
@@ -123,10 +125,12 @@ function Dashboard() {
         <Sidebar
           selectedFilter={selectedFilter}
           onSelectFilter={setSelectedFilter}
+          isOpen={sidebarOpen}
+          onClose={() => setSidebarOpen(false)}
         />
       )}
 
-      <div className={`p-6 flex-1 h-screen overflow-y-auto ${!isSharedView ? "ml-64" : ""}`}>
+      <div className={`p-4 sm:p-6 flex-1 h-screen overflow-y-auto ${!isSharedView ? "md:ml-64" : ""}`}>
         {!isSharedView && (
           <CreateContentModal
             open={modalOpen}
@@ -136,28 +140,41 @@ function Dashboard() {
         )}
 
         {/* Top Header / Actions */}
-        <div className="flex justify-between items-center mb-8">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-800">
-              {isSharedView
-                ? `${sharedUsername}'s Second Brain`
-                : selectedFilter === "all"
-                ? "All Notes"
-                : selectedFilter === "youtube"
-                ? "YouTube Videos"
-                : selectedFilter === "twitter"
-                ? "Twitter / X Posts"
-                : "Articles"}
-            </h1>
-            <p className="text-sm text-gray-500 mt-1">
-              {isSharedView
-                ? "Public view of saved links and notes"
-                : "Manage and organize your knowledge base"}
-            </p>
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6 sm:mb-8">
+          <div className="flex items-center gap-3">
+            {!isSharedView && (
+              <button
+                type="button"
+                onClick={() => setSidebarOpen(true)}
+                className="md:hidden p-2 rounded-lg text-gray-700 hover:bg-gray-200 transition-colors cursor-pointer"
+                title="Open menu"
+                aria-label="Open sidebar menu"
+              >
+                <MenuIcon />
+              </button>
+            )}
+            <div>
+              <h1 className="text-xl sm:text-2xl font-bold text-gray-800">
+                {isSharedView
+                  ? `${sharedUsername}'s Second Brain`
+                  : selectedFilter === "all"
+                  ? "All Notes"
+                  : selectedFilter === "youtube"
+                  ? "YouTube Videos"
+                  : selectedFilter === "twitter"
+                  ? "Twitter / X Posts"
+                  : "Articles"}
+              </h1>
+              <p className="text-xs sm:text-sm text-gray-500 mt-0.5">
+                {isSharedView
+                  ? "Public view of saved links and notes"
+                  : "Manage and organize your knowledge base"}
+              </p>
+            </div>
           </div>
 
           {!isSharedView && (
-            <div className="flex gap-3">
+            <div className="flex gap-2 sm:gap-3 w-full sm:w-auto justify-end">
               <Button
                 onClick={handleShare}
                 variant="secondary"
@@ -187,7 +204,7 @@ function Dashboard() {
 
         {/* Cards Grid */}
         {!loading && !sharedLoading && filteredContents.length > 0 && (
-          <div className="flex gap-6 flex-wrap items-start">
+          <div className="flex gap-4 sm:gap-6 flex-wrap items-start justify-center sm:justify-start">
             {filteredContents.map((item) => (
               <Card
                 key={item._id}

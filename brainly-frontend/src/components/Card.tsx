@@ -45,7 +45,7 @@ const Card = ({ contentId, title, link, type, onDelete }: CardProps) => {
   }, [link, type]);
 
   return (
-    <div className="p-4 bg-white rounded-lg border border-gray-200 shadow-sm w-80 min-h-64 flex flex-col justify-between">
+    <div className="p-4 bg-white rounded-lg border border-gray-200 shadow-sm w-full max-w-sm sm:w-80 min-h-64 flex flex-col justify-between">
       <div>
         <div className="flex justify-between items-center mb-3">
           <div className="flex items-center gap-2 text-md font-medium text-gray-800 truncate">

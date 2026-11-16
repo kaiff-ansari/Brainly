@@ -1,15 +1,35 @@
 
+import type { Ref, ChangeEvent } from "react";
+
 interface InputProps {
   placeholder: string;
-  ref?: any;
+  ref?: Ref<HTMLInputElement>;
+  type?: string;
+  value?: string;
+  onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
+  className?: string;
 }
 
-const InputFormContent = ({placeholder, ref}: InputProps) => {
+const InputFormContent = ({
+  placeholder,
+  ref,
+  type = "text",
+  value,
+  onChange,
+  className = ""
+}: InputProps) => {
   return (
-    <div>
-        <input ref={ref} placeholder={placeholder} type={"text"} className="px-4 py-2 border rounded m-2"></input>
+    <div className="w-full">
+      <input
+        ref={ref}
+        placeholder={placeholder}
+        type={type}
+        value={value}
+        onChange={onChange}
+        className={`w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 transition-colors ${className}`}
+      />
     </div>
-  )
-}
+  );
+};
 
-export default InputFormContent
+export default InputFormContent;

@@ -39,12 +39,20 @@ export const registerUser = async (req: Request, res: Response) => {
             jwtSecret,
             { expiresIn: "1h" }
         );
+        const safeUser = {
+            id: newUser._id,
+            username: newUser.username,
+            email: newUser.email,
+            role: newUser.role
+        };
         res.status(201).json({
-            newUser,
+            user: safeUser,
+            newUser: safeUser,
             token,
             message: "User created successfully"
         });
     } catch (error) {
+        console.error("Error creating user:", error);
         res.status(500).json({ message: "Error creating user" });
     }
 

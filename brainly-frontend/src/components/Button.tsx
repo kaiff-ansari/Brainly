@@ -1,34 +1,34 @@
 import type { ReactElement } from "react";
-interface ButtonProps {
 
+interface ButtonProps {
   variant: "primary" | "secondary";
   text: string;
   startIcon?: ReactElement;
-  onClick?: () => void,
-  fullWidth?: boolean,
-  loading?: boolean
-
+  onClick?: () => void;
+  fullWidth?: boolean;
+  loading?: boolean;
+  type?: "button" | "submit" | "reset";
 }
 
 const variantClasses = {
+  "primary": "bg-purple-600 text-white hover:bg-purple-700",
+  "secondary": "bg-purple-200 text-purple-600 hover:bg-purple-300"
+};
 
-  "primary": "bg-purple-600 text-white",
-  "secondary": "bg-purple-200 text-purple-600"
-}
+const defaultStyle = "px-4 py-2 rounded-md font-medium flex items-center cursor-pointer transition-colors";
 
+const Button = ({ variant, text, startIcon, onClick, fullWidth, loading, type = "button" }: ButtonProps) => {
+  return (
+    <button
+      type={type}
+      onClick={onClick}
+      className={`${variantClasses[variant]} ${defaultStyle} ${fullWidth ? "w-full justify-center" : ""} ${loading ? "opacity-50 cursor-not-allowed" : ""}`}
+      disabled={loading}
+    >
+      {startIcon && <div className="pr-2 flex items-center">{startIcon}</div>}
+      {loading ? "Loading..." : text}
+    </button>
+  );
+};
 
-const defaultStyle = "px-4 py-2 rounded-md font-light flex items-center"
-
-const Button = ({ variant, text, startIcon, onClick, fullWidth, loading}: ButtonProps) => {
-
-
-  return <button onClick={onClick} className={`${variantClasses[variant]} ${defaultStyle} ${fullWidth ? " w-full flex justify-center item-center" : ""} ${loading ? "opacity-45" : ""}` } disabled={loading}>
-
-    <div className="pr-2">
-      {startIcon}
-    </div>
-    {text}
-  </button>
-}
-
-export default Button
+export default Button;

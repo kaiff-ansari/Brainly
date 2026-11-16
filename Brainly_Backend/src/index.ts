@@ -3,8 +3,9 @@ import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import authRoutes from "./routes/auth.route.js";
-import contentRotes from "./routes/content.route.js";
+import contentRoutes from "./routes/content.route.js";
 import linkRoutes from "./routes/link.route.js";
+import tagRoutes from "./routes/tag.route.js";
 import connectDB from "./config/db.js";
 import cors from "cors";
 dotenv.config();
@@ -19,8 +20,9 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/v1/auth", authRoutes);
-app.use("/api/v1", contentRotes);
+app.use("/api/v1", contentRoutes);
 app.use("/api/v1", linkRoutes);
+app.use("/api/v1/tags", tagRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {

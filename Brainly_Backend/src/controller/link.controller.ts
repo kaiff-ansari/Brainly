@@ -23,76 +23,64 @@ export const generateLink = async (req: Request, res: Response) => {
 
             if (existingLink) {
                 return res.json({
-                    hash: existingLink.hash
-                })
-
+                    hash: existingLink.hash,
+                    message: existingLink.hash
+                });
             }
             const hash = random(10);
             await linkModel.create({
                 userId,
                 hash: hash
-            })
+            });
 
             return res.json({
+                hash: hash,
                 message: hash
-            })
-        }
-
-        else {
-
-            await linkModel.deleteOne({ userId })
+            });
+        } else {
+            await linkModel.deleteOne({ userId });
         }
 
         return res.json({
             message: "updated shareble link"
-        })
-
-
+        });
     } catch (error) {
-        res.status(500).json({ message: "Error generating link", error });
+        console.error("Error generating link:", error);
+        res.status(500).json({ message: "Error generating link" });
     }
-
-
-
-
-
-}
+};
 
 export const getLink = async (req: Request<{ hash: string }>, res: Response) => {
-
     const { hash } = req.params;
 
     try {
-
-
         const link = await linkModel.findOne({ hash });
 
         if (!link) {
-            return res.status(411).json({ message: "Link not found" });
+            return res.status(404).json({ message: "Link not found" });
         }
 
-        const content = await contentModel.findOne({
+        const content = await contentModel.find({
             userId: link.userId
-        })
+        }).populate("userId", "username");
 
         const user = await userModel.findOne({
             _id: link.userId
-        })
-
-        if (!user) {
-            return res.status(411).json({ message: "User not found" });
-        }
-        return res.status(200).json({
-
-            username: user.username,
-            content: content
-
         });
 
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        return res.status(200).json({
+            username: user.username,
+            content: content
+        });
     } catch (error) {
-        res.status(500).json({ message: "Error fetching link", error });
+        console.error("Error fetching link:", error);
+        res.status(500).json({ message: "Error fetching link" });
     }
-}
+};
 
 export const getAllLinks = async (req: Request, res: Response) => {
 

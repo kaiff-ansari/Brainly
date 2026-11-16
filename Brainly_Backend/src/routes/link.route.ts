@@ -5,7 +5,8 @@ import { userMiddleware } from '../middleware/auth.middleware.js';
 const router = express.Router();
 
 router.post('/brain/share', userMiddleware, generateLink);
-router.get('/brain/:hash',getLink);
+router.post('/share', userMiddleware, generateLink);
+router.get('/brain/:hash', getLink);
 
 
 export default router;

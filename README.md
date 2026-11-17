@@ -6,7 +6,7 @@
 
 ## 🌐 Live Demo
 
-🚀 **Live Application:** [Visit SecondBrain](YOUR_DEPLOYMENT_URL)
+🚀 **Live Application:** [Visit SecondBrain](https://brainly-ruby.vercel.app)
 
 ---
 
